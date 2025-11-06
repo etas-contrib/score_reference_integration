@@ -22,6 +22,32 @@ jobs:
     integration_test:
       runs-on: ubuntu-latest
       steps:
+        - name: Show disk space before build
+          run: |
+            echo 'Disk space before build:'
+            df -h
+        - name: Bazel build targets
+          run: |
+            echo "Removing unwanted software... "
+            du -sh /usr/share/dotnet
+            sudo rm -rf /usr/share/dotnet # remove dotnet
+            du -sh /usr/local/lib/android
+            sudo rm -rf /usr/local/lib/android # remove android
+            du -sh /opt/ghc
+            sudo rm -rf /opt/ghc # remove haskell
+            du -sh /usr/local/.ghcup
+            sudo rm -rf /usr/local/.ghcup # remove haskell
+            du -sh /usr/share/swift
+            sudo rm -rf /usr/share/swift # remove swift
+            du -sh /usr/local/share/chromium
+            sudo rm -rf /usr/local/share/chromium # remove chromium
+        - name: Show disk space after cleanup
+          run: |
+            echo 'Disk space after cleanup:'
+            df -h
+        - name: Link bazel cache to /mnt
+          run: |
+            ls -s /mnt/bazel-cache /home/runner/.cache
         - name: Checkout repository
           uses: actions/checkout@v4.2.2
         - name: Setup Bazel
@@ -33,28 +59,22 @@ jobs:
             disk-cache: ${{ github.workflow }}
             # Share repository cache between workflows.
             repository-cache: true
-        - name: Show disk space before build
-          run: |
-            echo 'Disk space before build:'
-            df -h
-            echo 'Inode usage before build:'
-            df -i
-            echo 'Largest top-level directories:'
-            du -h -d 1 2>/dev/null | sort -h | tail -n 20 || true
         - name: Bazel build targets
           run: |
-            echo 'Starting Bazel build (disk space snapshot):'
-            df -h | sed 's/^/PRE-BUILD DF /'
+            ::group::get latest commits from main branches
+            python3 tools/update_module_latest.py --output known_good.updated.json
+            cat known_good.updated.json
+            echo "::endgroup::"
+            ::group::update score_modules.MODULE.bazel
+            python3 tools/update_module_from_known_good.py --known known_good.updated.json
+            cat score_modules.MODULE.bazel
+            echo "::endgroup::"
             ./integration_test.sh
         - name: Show disk space after build
           if: always()
           run: |
             echo 'Disk space after build:'
             df -h
-            echo 'Inode usage after build:'
-            df -i
-            echo 'Largest top-level directories after build:'
-            du -h -d 1 2>/dev/null | sort -h | tail -n 20 || true
         - name: Publish build summary
           if: always()
           run: |

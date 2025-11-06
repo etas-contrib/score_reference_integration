@@ -23,6 +23,7 @@ include("//:score_modules.MODULE.bazel")
 bazel_dep(name = "score_platform", version = "0.3.0")
 bazel_dep(name = "score_bazel_platforms", version = "0.0.2")
 
+
 # QNX toolchain
 bazel_dep(name = "score_toolchains_qnx", version = "0.0.2")
 toolchains_qnx = use_extension("@score_toolchains_qnx//:extensions.bzl", "toolchains_qnx")
@@ -33,13 +34,20 @@ toolchains_qnx.sdp(
 )
 use_repo(toolchains_qnx, "toolchains_qnx_sdp")
 use_repo(toolchains_qnx, "toolchains_qnx_qcc")
+use_repo(toolchains_qnx, "toolchains_qnx_ifs")
+register_toolchains(
+    "@toolchains_qnx_ifs//:ifs_x86_64",
+    "@toolchains_qnx_ifs//:ifs_aarch64",
+    dev_dependency = True,
+)
 
 #gcc toolchain for baselibs
-bazel_dep(name = "score_toolchains_gcc", version = "0.5", dev_dependency=False)
-gcc = use_extension("@score_toolchains_gcc//extentions:gcc.bzl", "gcc", dev_dependency=False)
+bazel_dep(name = "score_toolchains_gcc", version = "0.5", dev_dependency = False)
+gcc = use_extension("@score_toolchains_gcc//extentions:gcc.bzl", "gcc", dev_dependency = False)
+# Align toolchain archive with persistency module (v0.0.3) so its labels (e.g. host_gcc_12) are present.
 gcc.toolchain(
-    url = "https://github.com/eclipse-score/toolchains_gcc_packages/releases/download/0.0.1/x86_64-unknown-linux-gnu_gcc12.tar.gz",
-    sha256 = "457f5f20f57528033cb840d708b507050d711ae93e009388847e113b11bf3600",
+    url = "https://github.com/eclipse-score/toolchains_gcc_packages/releases/download/v0.0.3/x86_64-unknown-linux-gnu_gcc12.tar.gz",
+    sha256 = "8fa85c2a93a6bef1cf866fa658495a2416dfeec692e4246063b791abf18da083",
     strip_prefix = "x86_64-unknown-linux-gnu",
 )
 gcc.extra_features(
@@ -68,31 +76,6 @@ use_repo(llvm, "llvm_toolchain_llvm")
 
 register_toolchains("@llvm_toolchain//:all")
 
-## needed additions to build
-bazel_dep(name = "testing-utils")
-git_override(
-    module_name = "testing-utils",
-    commit = "a847c7464cfa47e000141631d1223b92560d2e58",  # tag v0.2.0
-    remote = "https://github.com/qorix-group/testing_tools.git",
-)
-
-# # TODO: What is this for?
-archive_override(
-    module_name = "rules_boost",
-    strip_prefix = "rules_boost-master",
-    urls = ["https://github.com/nelhage/rules_boost/archive/refs/heads/master.tar.gz"],
-)
-
-# # TODO: we cannot use communication without including TRLC here?
-bazel_dep(name = "trlc", version = "0.0.0")
-git_override(
-    module_name = "trlc",
-    remote = "https://github.com/bmw-software-engineering/trlc.git",
-    commit = "650b51a47264a4f232b3341f473527710fc32669",  # trlc-2.0.2 release
-)
-
-# System/Basics
-
 ## Python
 bazel_dep(name = "rules_python", version = "1.4.1")
 
@@ -105,3 +88,52 @@ python.toolchain(
     python_version = PYTHON_VERSION,
 )
 use_repo(python)
+
+# Special imports for certain modules
+
+# # TODO: What is this for? -> com dep
+# archive_override(
+#     module_name = "rules_boost",
+#     strip_prefix = "rules_boost-master",
+#     urls = ["https://github.com/nelhage/rules_boost/archive/refs/heads/master.tar.gz"],
+# )
+
+# # TODO: we cannot use communication without including TRLC here?
+bazel_dep(name = "trlc", version = "0.0.0")
+git_override(
+    module_name = "trlc",
+    remote = "https://github.com/bmw-software-engineering/trlc.git",
+    commit = "650b51a47264a4f232b3341f473527710fc32669",  # trlc-2.0.2 release
+)
+
+# needed for orchestrator module
+bazel_dep(name = "score_virtualization", version = "0.0.1")
+git_override(
+    module_name = "score_virtualization",
+    commit = "31966b7ad85a03efe5b2cfc8884d9812a6a82a88",
+    remote = "https://github.com/qorix-group/score_virtualization.git",
+)
+
+# pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip", dev_dependency = True)
+# pip.parse(
+#     hub_name = "pip_score_venv_test",
+#     python_version = PYTHON_VERSION,
+#     requirements_lock = "//component_integration_tests/python_test_cases:requirements.txt.lock",
+# )
+# 
+# use_repo(pip, "pip_score_venv_test")
+
+# needed for persistency module
+bazel_dep(name = "testing-utils")
+git_override(
+    module_name = "testing-utils",
+    commit = "a847c7464cfa47e000141631d1223b92560d2e58",  # tag v0.2.0
+    remote = "https://github.com/qorix-group/testing_tools.git",
+)
+# because testing-utils depends on an old version....
+bazel_dep(name = "score-baselibs", version = "", dev_dependency = False)
+git_override(
+    module_name = "score-baselibs",
+    commit = "06a27a163a2aa787e1b99f6b04feb00b413b3355",
+    remote = "https://github.com/eclipse-score/baselibs.git",
+)

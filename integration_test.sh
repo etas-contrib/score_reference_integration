@@ -10,10 +10,11 @@ SUMMARY_FILE=${SUMMARY_FILE:-_logs/build_summary.md}
 mkdir -p "${LOG_DIR}" || true
 
 declare -A BUILD_TARGET_GROUPS=(
-    [baselibs]="@score-baselibs//score/..."
-    [communication]="@communication//score/... @communication//third_party/..."
+    [baselibs]="@score_baselibs//score/..."
+    [score_communication]="@score_communication//score/... @score_communication//third_party/..."
     [persistency]="@score_persistency//src/... @score_persistency//tests/cpp_test_scenarios/... @score_persistency//tests/rust_test_scenarios/..."
-    [score-mw-log]="@score-mw-log//src/..."
+    [score_logging]="@score_logging//src/..."
+    [score_orchestrator]="@score_orchestrator//src/..."
 )
 
 warn_count() {

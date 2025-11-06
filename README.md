@@ -7,14 +7,15 @@ Integration workspace for the Eclipse Score project. This repository is used to 
 ### Baselibs
 
 ```bash
-bazel build --config bl-x86_64-linux @score-baselibs//score/... --verbose_failures
+bazel build --config bl-x86_64-linux @score_baselibs//score/... --verbose_failures
 ```
 
 ### Communication
 
 ```bash
-bazel build --config bl-x86_64-linux @communication//score/... @communication//third_party/...  --verbose_failures
+bazel build --config bl-x86_64-linux @score_communication//score/... @score_communication//third_party/...  --verbose_failures
 ```
+bazel build --config bl-x86_64-linux //score/...  --verbose_failures
 
 ### Persistency
 
@@ -27,8 +28,22 @@ bazel build \
     --copt=-Wno-deprecated-declarations \
     --verbose_failures
 ```
+```bash
+bazel build \
+    @score_persistency//src/... \
+    @score_persistency//tests/cpp_test_scenarios/... \
+    --extra_toolchains=@llvm_toolchain//:cc-toolchain-x86_64-linux \
+    --copt=-Wno-deprecated-declarations \
+    --verbose_failures
+```
 
 > Note: Python tests for `@score_persistency` cannot be built from this integration workspace due to Bazel external repository visibility limitations. The pip extension and Python dependencies must be accessed within their defining module.
+
+### Orchestrator
+```bash
+bazel build --config bl-x86_64-linux @score_orchestrator//...  --verbose_failures
+```
+
 
 ## ⚠️ Observed Issues
 
@@ -39,7 +54,7 @@ Problems when building from a different repo:
 - fixed in feature/build_from_reference_repo https://github.com/etas-contrib/score_communication.git
 
 ### communication: get_git_info
-@communication//third_party/... here get_git_info is causing problems because it cannot find github root from e.g.
+@score_communication//third_party/... here get_git_info is causing problems because it cannot find github root from e.g.
 /home/runner/.bazel/sandbox/processwrapper-sandbox/1689/execroot/_main/bazel-out/k8-opt-exec-ST-8abfa5a323e1/bin/external/communication+/third_party/traceability/tools/source_code_linker/parsed_source_files_for_source_code_linker.runfiles/communication+/third_party/traceability/tools/source_code_linker/get_git_info.py
 is this needed? should we fix it?
 
