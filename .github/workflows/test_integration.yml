@@ -39,9 +39,10 @@ jobs:
           run: |
             echo 'Disk space after cleanup:'
             df -h
-        - name: Link bazel cache to /mnt
-          run: |
-            ls -s /mnt/bazel-cache /home/runner/.cache
+        # - name: Link bazel cache to /mnt
+        #   run: |
+        #     mkdir -p /mnt/bazel-cache
+        #     ls -s /mnt/bazel-cache /home/runner/.cache
         - name: Checkout repository
           uses: actions/checkout@v4.2.2
         - name: Setup Bazel
