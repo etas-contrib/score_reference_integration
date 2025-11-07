@@ -15,7 +15,7 @@ bazel build --config bl-x86_64-linux @score_baselibs//score/... --verbose_failur
 ```bash
 bazel build --config bl-x86_64-linux @score_communication//score/... @score_communication//third_party/...  --verbose_failures
 ```
-bazel build --config bl-x86_64-linux //score/...  --verbose_failures
+bazel build --config bl-x86_64-linux @score_communication//score/...  --verbose_failures
 
 ### Persistency
 
@@ -31,7 +31,6 @@ bazel build \
 ```bash
 bazel build \
     @score_persistency//src/... \
-    @score_persistency//tests/cpp_test_scenarios/... \
     --extra_toolchains=@llvm_toolchain//:cc-toolchain-x86_64-linux \
     --copt=-Wno-deprecated-declarations \
     --verbose_failures
@@ -41,11 +40,15 @@ bazel build \
 
 ### Orchestrator
 ```bash
-bazel build --config bl-x86_64-linux @score_orchestrator//...  --verbose_failures
+bazel build --config bl-x86_64-linux @score_orchestrator//src/...  --verbose_failures
 ```
 
 
 ## ⚠️ Observed Issues
+
+### Orchestrator
+BUILD:14 - load("@score_toolchains_qnx//rules/fs:ifs.bzl", "qnx_ifs")
+either score_toolchains_qnx is a dev_dep or it is directly loaded.
 
 ### communication: score/mw/com/requirements
 Problems when building from a different repo:

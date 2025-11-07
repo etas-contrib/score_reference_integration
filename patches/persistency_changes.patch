@@ -1,0 +1,35 @@
+diff --git a/MODULE.bazel b/MODULE.bazel
+index 8adeac9..a273dc4 100644
+--- a/MODULE.bazel
++++ b/MODULE.bazel
+@@ -50,9 +50,9 @@ rust.toolchain(
+ bazel_dep(name = "rules_cc", version = "0.1.1")
+ 
+ #score gcc toolchain
+-bazel_dep(name = "score_toolchains_gcc", version = "0.5", dev_dependency = False)
++bazel_dep(name = "score_toolchains_gcc", version = "0.5", dev_dependency = True)
+ 
+-gcc = use_extension("@score_toolchains_gcc//extentions:gcc.bzl", "gcc", dev_dependency = False)
++gcc = use_extension("@score_toolchains_gcc//extentions:gcc.bzl", "gcc", dev_dependency = True)
+ gcc.toolchain(
+     sha256 = "8fa85c2a93a6bef1cf866fa658495a2416dfeec692e4246063b791abf18da083",
+     strip_prefix = "x86_64-unknown-linux-gnu",
+@@ -60,12 +60,15 @@ gcc.toolchain(
+ )
+ use_repo(gcc, "gcc_toolchain", "gcc_toolchain_gcc")
+ 
+-register_toolchains("@gcc_toolchain//:all")
++register_toolchains(
++    "@gcc_toolchain//:all",
++    dev_dependency = True,
++)
+ 
+ ## Bazel registry
+ # Module dependencies
+-bazel_dep(name = "googletest", version = "1.17.0.bcr.1", dev_dependency = True)
+-bazel_dep(name = "google_benchmark", version = "1.9.4", dev_dependency = True)
++bazel_dep(name = "googletest", version = "1.17.0.bcr.1", dev_dependency = False)
++bazel_dep(name = "google_benchmark", version = "1.9.4", dev_dependency = False)
+ 
+ ## S-CORE bazel registry
+ bazel_dep(name = "score_tooling", version = "1.0.2")

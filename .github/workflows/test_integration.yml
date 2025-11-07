@@ -29,18 +29,12 @@ jobs:
         - name: Bazel build targets
           run: |
             echo "Removing unwanted software... "
-            du -sh /usr/share/dotnet
-            sudo rm -rf /usr/share/dotnet # remove dotnet
-            du -sh /usr/local/lib/android
-            sudo rm -rf /usr/local/lib/android # remove android
-            du -sh /opt/ghc
-            sudo rm -rf /opt/ghc # remove haskell
-            du -sh /usr/local/.ghcup
-            sudo rm -rf /usr/local/.ghcup # remove haskell
-            du -sh /usr/share/swift
-            sudo rm -rf /usr/share/swift # remove swift
-            du -sh /usr/local/share/chromium
-            sudo rm -rf /usr/local/share/chromium # remove chromium
+            if [ -d /usr/share/dotnet ]; then du -sh /usr/share/dotnet; sudo rm -rf /usr/share/dotnet; fi # remove dotnet
+            if [ -d /usr/local/lib/android ]; then du -sh /usr/local/lib/android; sudo rm -rf /usr/local/lib/android; fi # remove android
+            if [ -d /opt/ghc ]; then du -sh /opt/ghc; sudo rm -rf /opt/ghc; fi # remove haskell
+            if [ -d /usr/local/.ghcup ]; then du -sh /usr/local/.ghcup; sudo rm -rf /usr/local/.ghcup; fi # remove haskell
+            if [ -d /usr/share/swift ]; then du -sh /usr/share/swift; sudo rm -rf /usr/share/swift; fi # remove swift
+            if [ -d /usr/local/share/chromium ]; then du -sh /usr/local/share/chromium; sudo rm -rf /usr/local/share/chromium; fi # remove chromium
         - name: Show disk space after cleanup
           run: |
             echo 'Disk space after cleanup:'
