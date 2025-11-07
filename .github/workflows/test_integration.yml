@@ -18,6 +18,7 @@ name: Bazel Build some repositories
 on:
   workflow_dispatch:
   push:
+  pr:
 jobs:
     integration_test:
       runs-on: ubuntu-latest
@@ -65,11 +66,11 @@ jobs:
             # cat score_modules.MODULE.bazel
             # echo "::endgroup::"
             ./integration_test.sh
-        # - name: Show disk space after build
-        #   if: always()
-        #   run: |
-        #     echo 'Disk space after build:'
-        #     df -h
+        - name: Show disk space after build
+          if: always()
+          run: |
+            echo 'Disk space after build:'
+            df -h
         - name: Publish build summary
           if: always()
           run: |
