@@ -26,15 +26,15 @@ jobs:
           run: |
             echo 'Disk space before build:'
             df -h
-        - name: Bazel build targets
+        - name: Removing unneeded software
           run: |
-            echo "Removing unwanted software... "
-            if [ -d /usr/share/dotnet ]; then du -sh /usr/share/dotnet; sudo rm -rf /usr/share/dotnet; fi # remove dotnet
-            if [ -d /usr/local/lib/android ]; then du -sh /usr/local/lib/android; sudo rm -rf /usr/local/lib/android; fi # remove android
-            if [ -d /opt/ghc ]; then du -sh /opt/ghc; sudo rm -rf /opt/ghc; fi # remove haskell
-            if [ -d /usr/local/.ghcup ]; then du -sh /usr/local/.ghcup; sudo rm -rf /usr/local/.ghcup; fi # remove haskell
-            if [ -d /usr/share/swift ]; then du -sh /usr/share/swift; sudo rm -rf /usr/share/swift; fi # remove swift
-            if [ -d /usr/local/share/chromium ]; then du -sh /usr/local/share/chromium; sudo rm -rf /usr/local/share/chromium; fi # remove chromium
+            echo "Removing unneeded software... "
+            if [ -d /usr/share/dotnet ]; then echo "Removing dotnet..."; start=$(date +%s); sudo rm -rf /usr/share/dotnet; end=$(date +%s); echo "Duration: $((end-start))s"; fi
+            if [ -d /usr/local/lib/android ]; then echo "Removing android..."; start=$(date +%s); sudo rm -rf /usr/local/lib/android; end=$(date +%s); echo "Duration: $((end-start))s"; fi
+            if [ -d /opt/ghc ]; then echo "Removing haskell (ghc)..."; start=$(date +%s); sudo rm -rf /opt/ghc; end=$(date +%s); echo "Duration: $((end-start))s"; fi
+            if [ -d /usr/local/.ghcup ]; then echo "Removing haskell (ghcup)..."; start=$(date +%s); sudo rm -rf /usr/local/.ghcup; end=$(date +%s); echo "Duration: $((end-start))s"; fi
+            if [ -d /usr/share/swift ]; then echo "Removing swift..."; start=$(date +%s); sudo rm -rf /usr/share/swift; end=$(date +%s); echo "Duration: $((end-start))s"; fi
+            if [ -d /usr/local/share/chromium ]; then echo "Removing chromium..."; start=$(date +%s); sudo rm -rf /usr/local/share/chromium; end=$(date +%s); echo "Duration: $((end-start))s"; fi
         - name: Show disk space after cleanup
           run: |
             echo 'Disk space after cleanup:'
