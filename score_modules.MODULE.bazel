@@ -24,10 +24,9 @@ single_version_override(
 )
 
 bazel_dep(name = "score_persistency")
-git_override(
+single_version_override(
     module_name = "score_persistency",
-    remote = "https://github.com/eclipse-score/persistency.git",
-    commit = "393c1c30e6959ff5befe85751baee8a8cd8024e9", # Nov 7, 2025, 7:37 AM GMT+1
+    version = "0.2.0",
 )
 
 bazel_dep(name = "score_orchestrator")
