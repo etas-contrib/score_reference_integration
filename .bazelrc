@@ -45,6 +45,24 @@ build:x86_64-linux --config=shared
 build:x86_64-linux --platforms=@score_bazel_platforms//:x86_64-linux-gcc_12.2.0-posix
 build:x86_64-linux --features=-treat_warnings_as_errors # due to baselibs deprecations
 
+build:arm64-linux --config=shared
+build:arm64-linux --platforms=@score_bazel_platforms//:aarch64-linux-gcc_12.2.0-posix
+build:arm64-linux --features=-treat_warnings_as_errors # due to baselibs deprecations
+
+
+build:x86_64-qnx8_0 --sandbox_writable_path=/var/tmp
+build:x86_64-qnx8_0 --config=shared
+build:x86_64-qnx8_0 --platforms=@score_bazel_platforms//:x86_64-qnx8_0
+build:x86_64-qnx8_0 --extra_toolchains=@toolchains_qnx_qcc//:qcc_x86_64
+build:x86_64-qnx8_0 --extra_toolchains=@score_toolchains_rust//toolchains/x86_64-unknown-linux-gnu:toolchain_x86_64_linux
+
+
+build:arm64-qnx8_0 --sandbox_writable_path=/var/tmp
+build:arm64-qnx8_0 --config=shared
+build:arm64-qnx8_0 --platforms=@score_bazel_platforms//:arm64-qnx8_0
+build:arm64-qnx8_0 --extra_toolchains=@toolchains_qnx_qcc//:qcc_aarch64
+build:arm64-qnx8_0 --extra_toolchains=@score_toolchains_rust//toolchains/aarch64-unknown-qnx8_0:toolchain_aarch64_qnx8_0
+
 # this is deprecated, use build:x86_64-linux instead
 build:_bl_common --host_platform=@score_bazel_platforms//:x86_64-linux
 

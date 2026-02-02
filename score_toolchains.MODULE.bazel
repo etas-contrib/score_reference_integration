@@ -25,16 +25,52 @@ gcc.toolchain(
     version = "12.2.0",
     use_default_package = True,
 )
+gcc.toolchain(
+    name = "score_aarch64_gcc_toolchain",
+    target_cpu = "aarch64",
+    target_os = "linux",
+    version = "12.2.0",
+    use_default_package = True,
+) 
 
 use_repo(
     gcc,
     "score_gcc_toolchain",
+    "score_aarch64_gcc_toolchain",
 )
 
-
-rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
-rust.toolchain(
-    edition = "2021",
-    versions = ["1.93.0"],
+bazel_dep(name = "score_toolchains_qnx", version = "0.0.6")
+toolchains_qnx = use_extension("@score_toolchains_qnx//:extensions.bzl", "toolchains_qnx", dev_dependency=True)
+# TODO: Add here your QNX8 toolchain which meets the requirements listed in qnx8/README.md
+toolchains_qnx.sdp(
+    url = "https://path_to_your_qnx_sdp_8.0.3_toolchain.tar.gz",
+    sha256 = "03a0afc",
 )
-use_repo(rust, "rust_toolchains")
+use_repo(toolchains_qnx, "toolchains_qnx_sdp")
+use_repo(toolchains_qnx, "toolchains_qnx_qcc")
+
+
+# rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
+# rust.toolchain(
+#     edition = "2021",
+#     versions = ["1.90.0"],
+# )
+# use_repo(rust, "rust_toolchains")
+
+
+bazel_dep(name = "rust_qnx8_toolchain", version = "1.2.0", dev_dependency = True)
+bazel_dep(name = "score_toolchains_rust", version = "0.1.1", dev_dependency = True)
+
+git_override(
+    module_name = "score_toolchains_rust",
+    commit = "bcf8e5364f72cf136ec81960350a82e2b5c45449",
+    remote = "https://github.com/eclipse-score/toolchains_rust.git",
+)
+
+archive_override(
+    module_name = "rust_qnx8_toolchain",
+    strip_prefix = "qnx8",
+    urls = [
+        "https://github.com/qorix-group/rust-lang-qnx8/releases/download/1.2.0/qnx8_rust_toolchain.tar.gz",
+    ],
+)
