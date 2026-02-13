@@ -16,6 +16,7 @@ class Module:
 	version: str | None = None
 	patches: list[str] | None = None
 	branch: str = "main"
+	pin_version: bool = False
 
 	@classmethod
 	def from_dict(cls, name: str, module_data: Dict[str, Any]) -> Module:
@@ -29,6 +30,8 @@ class Module:
 				- version (str, optional): Module version
 				- patches (list[str], optional): List of patch files
 				- branch (str, optional): Git branch name (default: main)
+				- pin_version (bool, optional): If true, module hash is not updated
+				  to latest HEAD by update scripts (default: false)
 		
 		Returns:
 			Module instance
@@ -39,6 +42,7 @@ class Module:
 		version = module_data.get("version")
 		patches = module_data.get("patches", [])
 		branch = module_data.get("branch", "main")
+		pin_version = module_data.get("pin_version", False)
 		
 		return cls(
 			name=name,
@@ -46,7 +50,8 @@ class Module:
 			repo=repo,
 			version=version,
 			patches=patches if patches else None,
-			branch=branch
+			branch=branch,
+			pin_version=pin_version
 		)
 
 	@classmethod
@@ -107,4 +112,6 @@ class Module:
 			result["patches"] = self.patches
 		if self.branch and self.branch != "main":
 			result["branch"] = self.branch
+		if self.pin_version:
+			result["pin_version"] = True
 		return result
